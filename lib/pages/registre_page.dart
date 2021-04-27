@@ -1,8 +1,11 @@
+import 'package:chat_y_login/helpers/mostrar_alerta.dart';
+import 'package:chat_y_login/services/auth_services.dart';
 import 'package:chat_y_login/widgets/boton_login.dart';
 import 'package:chat_y_login/widgets/input.dart';
 import 'package:chat_y_login/widgets/labels.dart';
 import 'package:chat_y_login/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 class RegistrePage extends StatelessWidget {
@@ -52,6 +55,7 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authServices = Provider.of<AuthServices>(context);
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -76,11 +80,19 @@ class __FormState extends State<_Form> {
             isPassword: true,
             ),
             BotonLogin(
-              texto: 'Ingrese',
+              texto: 'Crear cuenta',
               color: Colors.blue,
               alto: 55,
               ancho: double.infinity,
-              press: (){print(emailCtrl.text);},
+              press: authServices.autenticando ? null :() async{
+
+               final registroOk = await authServices.register(nombreCtrl.text.trim(), emailCtrl.text.trim(), passCtrl.text.trim());
+                if (registroOk == true) {
+                  Navigator.pushReplacementNamed(context, 'usuario');
+                }else{
+                  mostrarAlerta(context,'Registro incorrecto', registroOk);
+                }
+              },
             )
         ],
       ),

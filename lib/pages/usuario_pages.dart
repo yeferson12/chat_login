@@ -1,5 +1,7 @@
 import 'package:chat_y_login/models/usuario.dart';
+import 'package:chat_y_login/services/auth_services.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
@@ -16,13 +18,19 @@ class UsuarioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final authServices = Provider.of<AuthServices>(context);
+    final usuario = authServices.usuario;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mi nombre', style: TextStyle(color: Colors.black87),),
+        title: Text(usuario.nombre, style: TextStyle(color: Colors.black87),),
         elevation: 1,
         backgroundColor: Colors.white,
         leading: IconButton(icon: Icon(Icons.exit_to_app, color: Colors.black87,),
-         onPressed: (){}),
+         onPressed: (){
+           Navigator.pushReplacementNamed(context, 'login');
+           AuthServices.deleteToken();
+         }),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 10),

@@ -1,8 +1,11 @@
+import 'package:chat_y_login/helpers/mostrar_alerta.dart';
+import 'package:chat_y_login/services/auth_services.dart';
 import 'package:chat_y_login/widgets/boton_login.dart';
 import 'package:chat_y_login/widgets/input.dart';
 import 'package:chat_y_login/widgets/labels.dart';
 import 'package:chat_y_login/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -51,6 +54,7 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthServices>(context);
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric(horizontal: 50),
@@ -73,7 +77,18 @@ class __FormState extends State<_Form> {
               color: Colors.blue,
               alto: 55,
               ancho: double.infinity,
-              press: (){print(emailCtrl.text);},
+              press:authProvider.autenticando ? null : () async{
+                
+                FocusScope.of(context).unfocus();//quietar el teclado al presionar el boton
+                
+                final loginOk = await authProvider.login(emailCtrl.text.trim(), passCtrl.text.trim());
+                  if (loginOk) {
+                     Navigator.pushReplacementNamed(context, 'usuario');
+                  }else{
+                       mostrarAlerta(context, 'login incorrecto', 'revise sus credenciales nuevamente');
+                  }
+                },
+
             )
         ],
       ),
